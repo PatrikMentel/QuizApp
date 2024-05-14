@@ -1,4 +1,4 @@
-package com.example.quiz_app
+package com.example.quiz_app.shop
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,22 +32,26 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.quiz_app.AppData
+import com.example.quiz_app.R
+import com.example.quiz_app.data.Quiz
+import com.example.quiz_app.userName.shapes
 
 @Composable
-fun HomeScreen(onShopClick: () -> Unit = {}, onQuizSelect: () -> Unit = {}) {
+fun ShopScreen(onHomeClick: () -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize(1f)
     ) {
-        HomeTopBar()
+        ShopTopBar()
         Spacer(modifier = Modifier.padding(10.dp))
-        HomeMainContent(onQuizSelect)
-        HomeBottomNav(onShopClick)
+        ShopMainContent()
+        ShopBottomNav(onHomeClick)
     }
 }
 
 @Composable
-fun HomeTopBar() {
+fun ShopTopBar() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -69,7 +74,7 @@ fun HomeTopBar() {
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Patrik",
+                    text = AppData.userName,
                     color = colorResource(id = R.color.white),
                     fontSize = 28.sp,
                     fontWeight = FontWeight(600),
@@ -94,7 +99,7 @@ fun HomeTopBar() {
                         modifier = Modifier.scale(0.6f)
                     )
                     Text(
-                        text = "120",
+                        text = AppData.coins.toString(),
                         fontSize = 20.sp,
                         color = colorResource(id = R.color.white)
                     )
@@ -105,66 +110,106 @@ fun HomeTopBar() {
 }
 
 @Composable
-fun HomeMainContent(onQuizSelect: () -> Unit = {}) {
-    HomeQuizCard(id = 1, title = "General knowledge", color = colorResource(id = R.color.purple_700), rating = 76.8)
-    Spacer(modifier = Modifier.padding(10.dp))
-    HomeQuizCard(id = 2, title = "History", color = colorResource(id = R.color.teal_700), rating = 82.1)
-    Spacer(modifier = Modifier.padding(10.dp))
-    HomeQuizCard(id = 3, title = "Science & Tech", color = colorResource(id = R.color.purple_200), rating = 59.5)
+fun ShopMainContent() {
+    val quizzes = mutableListOf<Quiz>()
+    val q1 = Quiz(0, "General", 0,0,0, "0", 100, 0)
+    val q2 = Quiz(1, "History", 0,0,0, "0", 120, 0)
+    val q3 = Quiz(2, "Science & Tech", 0,0,0, "0", 120, 0)
+    val q4 = Quiz(3, "Hobbies", 0,0,0, "0", 100, 0)
+    val q5 = Quiz(4, "Monuments", 0,0,0, "0", 80, 0)
+    quizzes.add(q1)
+    quizzes.add(q2)
+    quizzes.add(q3)
+    quizzes.add(q4)
+    quizzes.add(q5)
+    LazyColumn() {
+        items(quizzes) { quiz ->
+            ShopQuizCard(quiz = quiz)
+            Spacer(modifier = Modifier.height(15.dp))
+        }
+    }
 }
 
 @Composable
-fun HomeQuizCard(id: Int, title: String, color: Color, rating: Double, onQuizSelect: () -> Unit = {}) {
-    Button(
-        onClick = { onQuizSelect() },
+fun ShopQuizCard(quiz: Quiz) {
+    Box(
         modifier = Modifier
             .fillMaxWidth(0.9f)
-            .height(180.dp),
-        contentPadding = PaddingValues(0.dp),
-        shape = shapes.extraSmall
+            .height(180.dp)
+            .background(color = Color(quiz.rValue, quiz.gValue, quiz.bValue), shape = shapes.extraSmall)
     ) {
-        Box(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .background(color = color, shape = shapes.extraSmall)
+                .matchParentSize()
+                .padding(10.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .matchParentSize()
-                    .padding(10.dp)
-            ) {
-                Text(
-                    text = title,
-                    fontSize = 32.sp,
-                    color = colorResource(id = R.color.white),
-                    modifier = Modifier.align(alignment = Alignment.Start)
-                )
-                Text(
-                    text = "$rating / 100",
-                    fontSize = 24.sp,
-                    color = colorResource(id = R.color.white),
-                    modifier = Modifier.align(alignment = Alignment.End)
-                )
+            Text(
+                text = quiz.title,
+                fontSize = 32.sp,
+                color = colorResource(id = R.color.white),
+                modifier = Modifier.align(alignment = Alignment.Start)
+            )
+            Box {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(0.9f)
+                ) {
+                    Box {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.coin),
+                                contentDescription = "Coin",
+                                modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = quiz.buyAmount.toString(),
+                                color = colorResource(id = R.color.white),
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight(500),
+                                softWrap = true
+                            )
+                        }
+                    }
+                    Box {
+                        Button(
+                            onClick = {},
+                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkBlue))
+                        ) {
+                            Text(
+                                text = "BUY",
+                                color = colorResource(id = R.color.white),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight(500)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun HomeBottomNav(onShopClick: () -> Unit = {}) {
+fun ShopBottomNav(onHomeClick: () -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.End
     ) {
         Row(
-            modifier = Modifier.shadow(10.dp, shapes.extraLarge)
+            modifier = Modifier.shadow(20.dp, shapes.extraLarge)
         ) {
             Button(
-                onClick = {},
+                onClick = { onHomeClick() },
                 modifier = Modifier
-                    .width(160.dp).height(80.dp)
+                    .width(160.dp)
+                    .height(80.dp)
                     .align(alignment = Alignment.CenterVertically)
                     .background(
                         color = colorResource(id = R.color.darkBlue),
@@ -172,14 +217,8 @@ fun HomeBottomNav(onShopClick: () -> Unit = {}) {
                     ),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkBlue))
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.background(color = colorResource(id = R.color.lightBlue), shape = shapes.extraLarge)
-                                        .width(100.dp).height(60.dp)
-                ) {
-                    Image(painter = painterResource(id = R.drawable.home), contentDescription = "Home", colorFilter = ColorFilter.tint(
-                        colorResource(id = R.color.white)))
-                }
+                Image(painter = painterResource(id = R.drawable.home), contentDescription = "Home", colorFilter = ColorFilter.tint(
+                    colorResource(id = R.color.white)))
             }
 
             Column {
@@ -198,9 +237,10 @@ fun HomeBottomNav(onShopClick: () -> Unit = {}) {
             }
 
             Button(
-                onClick = { onShopClick() },
+                onClick = {},
                 modifier = Modifier
-                    .width(160.dp).height(80.dp)
+                    .width(160.dp)
+                    .height(80.dp)
                     .align(alignment = Alignment.CenterVertically)
                     .background(
                         color = colorResource(id = R.color.darkBlue),
@@ -208,8 +248,19 @@ fun HomeBottomNav(onShopClick: () -> Unit = {}) {
                     ),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkBlue))
             ) {
-                Image(painter = painterResource(id = R.drawable.shop), contentDescription = "Shop", colorFilter = ColorFilter.tint(
-                    colorResource(id = R.color.white)))
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .background(
+                            color = colorResource(id = R.color.lightBlue),
+                            shape = shapes.extraLarge
+                        )
+                        .width(100.dp)
+                        .height(60.dp)
+                ) {
+                    Image(painter = painterResource(id = R.drawable.shop), contentDescription = "Shop", colorFilter = ColorFilter.tint(
+                        colorResource(id = R.color.white)))
+                }
             }
         }
     }

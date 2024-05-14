@@ -18,6 +18,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.quiz_app.home.HomeScreen
+import com.example.quiz_app.quiz.QuizScreen
+import com.example.quiz_app.quizConfig.QuizConfigScreen
+import com.example.quiz_app.shop.ShopScreen
+import com.example.quiz_app.userName.UserNameScreen
 import com.example.quiz_app.ui.theme.Quiz_AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -61,9 +66,14 @@ fun QuizAppStart(navController: NavHostController = rememberNavController())
 {
     val sharedPreferences = LocalContext.current.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     val username = sharedPreferences.getString("username", null)
-    var startScreen = ScreenNav.Quiz.name
+    var startScreen = ScreenNav.Start.name
     if (username != null) {
-        startScreen = ScreenNav.Quiz.name
+        startScreen = ScreenNav.Home.name
+        val coins = sharedPreferences.getString("coins", "100")
+        AppData.userName = username
+        if (coins != null) {
+            AppData.coins = coins.toInt()
+        }
     }
 
     NavHost(

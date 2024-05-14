@@ -1,4 +1,4 @@
-package com.example.quiz_app
+package com.example.quiz_app.userName
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -36,6 +36,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quiz_app.AppData
+import com.example.quiz_app.R
 
 val shapes = Shapes(
     extraSmall = RoundedCornerShape(12.dp),
@@ -125,6 +127,8 @@ fun UserNameScreen(onPlayClick: () -> Unit = {}) {
 fun saveAndPlay(username: String, sharedPreferences: SharedPreferences, onPlayClick: () -> Unit = {}) {
     val editor = sharedPreferences.edit()
     editor.putString("username", username)
+    editor.putString("coins", "100")
+    AppData.coins = 100
     editor.apply()
     onPlayClick()
 }
