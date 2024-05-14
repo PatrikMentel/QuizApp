@@ -1,5 +1,6 @@
 package com.example.quiz_app.shop
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,19 +28,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.quiz_app.AppData
 import com.example.quiz_app.R
 import com.example.quiz_app.data.Quiz
 import com.example.quiz_app.userName.shapes
+import androidx.compose.runtime.rememberCoroutineScope
+
+private var shopViewModel: ShopViewModel? = null
 
 @Composable
 fun ShopScreen(onHomeClick: () -> Unit = {}) {
+    shopViewModel = viewModel(modelClass = ShopViewModel::class.java)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize(1f)
@@ -84,7 +92,7 @@ fun ShopTopBar() {
         }
         Box {
             Box(modifier = Modifier
-                .background(Color(R.color.darkBlue), shapes.extraLarge)
+                .background(colorResource(R.color.darkBlue), shapes.extraLarge)
                 .border(2.dp, colorResource(id = R.color.lightBlue), shapes.extraLarge)
                 .width(110.dp)
                 .height(40.dp)
@@ -111,27 +119,22 @@ fun ShopTopBar() {
 
 @Composable
 fun ShopMainContent() {
-    val quizzes = mutableListOf<Quiz>()
-    val q1 = Quiz(0, "General", 0,0,0, "0", 100, 0)
-    val q2 = Quiz(1, "History", 0,0,0, "0", 120, 0)
-    val q3 = Quiz(2, "Science & Tech", 0,0,0, "0", 120, 0)
-    val q4 = Quiz(3, "Hobbies", 0,0,0, "0", 100, 0)
-    val q5 = Quiz(4, "Monuments", 0,0,0, "0", 80, 0)
-    quizzes.add(q1)
-    quizzes.add(q2)
-    quizzes.add(q3)
-    quizzes.add(q4)
-    quizzes.add(q5)
-    LazyColumn() {
-        items(quizzes) { quiz ->
-            ShopQuizCard(quiz = quiz)
-            Spacer(modifier = Modifier.height(15.dp))
+    val quizzes = shopViewModel?.state?.lockedQuizes
+    if (!quizzes.isNullOrEmpty()) {
+        LazyColumn() {
+            items(quizzes) { quiz ->
+                ShopQuizCard(quiz = quiz)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
         }
     }
 }
 
 @Composable
 fun ShopQuizCard(quiz: Quiz) {
+    val context = LocalContext.current
+    val coroutine = rememberCoroutineScope()
+
     Box(
         modifier = Modifier
             .fillMaxWidth(0.9f)
@@ -180,7 +183,10 @@ fun ShopQuizCard(quiz: Quiz) {
                     }
                     Box {
                         Button(
-                            onClick = {},
+                            onClick = {
+                                      shopViewModel?.buyQuiz(quizId = quiz.id, coroutineScope = coroutine)
+                                      Toast.makeText(context, "New quiz unlocked!", Toast.LENGTH_SHORT).show()
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkBlue))
                         ) {
                             Text(
@@ -199,67 +205,79 @@ fun ShopQuizCard(quiz: Quiz) {
 
 @Composable
 fun ShopBottomNav(onHomeClick: () -> Unit = {}) {
-    Column(
-        horizontalAlignment = Alignment.End
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Row(
-            modifier = Modifier.shadow(20.dp, shapes.extraLarge)
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Button(
+            FloatingActionButton(
                 onClick = { onHomeClick() },
                 modifier = Modifier
                     .width(160.dp)
                     .height(80.dp)
-                    .align(alignment = Alignment.CenterVertically)
                     .background(
                         color = colorResource(id = R.color.darkBlue),
-                        shape = RoundedCornerShape(topStart = 40.dp, bottomStart = 40.dp)
+                        shape = RoundedCornerShape(32.dp, 0.dp, 0.dp, 32.dp)
                     ),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkBlue))
+                containerColor = colorResource(id = R.color.darkBlue),
+                contentColor = colorResource(id = R.color.darkBlue)
             ) {
-                Image(painter = painterResource(id = R.drawable.home), contentDescription = "Home", colorFilter = ColorFilter.tint(
-                    colorResource(id = R.color.white)))
+                Image(
+                    painter = painterResource(id = R.drawable.home),
+                    contentDescription = "Home",
+                    colorFilter = ColorFilter.tint(
+                        colorResource(id = R.color.white)
+                    )
+                )
             }
 
             Column {
-                Spacer(modifier = Modifier
-                    .background(color = colorResource(id = R.color.darkBlue))
-                    .width(5.dp)
-                    .height(10.dp))
-                Spacer(modifier = Modifier
-                    .background(color = colorResource(id = R.color.white))
-                    .width(5.dp)
-                    .height(60.dp))
-                Spacer(modifier = Modifier
-                    .background(color = colorResource(id = R.color.darkBlue))
-                    .width(5.dp)
-                    .height(10.dp))
+                Spacer(
+                    modifier = Modifier
+                        .background(color = colorResource(id = R.color.darkBlue))
+                        .width(5.dp)
+                        .height(10.dp)
+                )
+                Spacer(
+                    modifier = Modifier
+                        .background(color = colorResource(id = R.color.white))
+                        .width(5.dp)
+                        .height(60.dp)
+                )
+                Spacer(
+                    modifier = Modifier
+                        .background(color = colorResource(id = R.color.darkBlue))
+                        .width(5.dp)
+                        .height(10.dp)
+                )
             }
 
-            Button(
-                onClick = {},
+            FloatingActionButton(
+                onClick = { },
                 modifier = Modifier
                     .width(160.dp)
-                    .height(80.dp)
-                    .align(alignment = Alignment.CenterVertically)
-                    .background(
-                        color = colorResource(id = R.color.darkBlue),
-                        shape = RoundedCornerShape(topEnd = 40.dp, bottomEnd = 40.dp)
-                    ),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkBlue))
+                    .height(80.dp),
+                containerColor = colorResource(id = R.color.darkBlue),
+                contentColor = colorResource(id = R.color.darkBlue)
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .background(
-                            color = colorResource(id = R.color.lightBlue),
-                            shape = shapes.extraLarge
-                        )
                         .width(100.dp)
                         .height(60.dp)
+                        .background(
+                            color = colorResource(id = R.color.darkBlue),
+                            shape = RoundedCornerShape(0.dp, 32.dp, 32.dp, 0.dp)
+                        )
                 ) {
-                    Image(painter = painterResource(id = R.drawable.shop), contentDescription = "Shop", colorFilter = ColorFilter.tint(
-                        colorResource(id = R.color.white)))
+                    Image(
+                        painter = painterResource(id = R.drawable.shop),
+                        contentDescription = "Shop",
+                        colorFilter = ColorFilter.tint(
+                            colorResource(id = R.color.white)
+                        )
+                    )
                 }
             }
         }

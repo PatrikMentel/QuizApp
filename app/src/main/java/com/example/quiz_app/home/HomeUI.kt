@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
@@ -45,7 +46,7 @@ fun HomeScreen(onShopClick: () -> Unit = {}, onQuizSelect: () -> Unit = {}) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize(1f)
+        modifier = Modifier.fillMaxSize()
     ) {
         HomeTopBar()
         Spacer(modifier = Modifier.padding(10.dp))
@@ -88,7 +89,7 @@ fun HomeTopBar() {
         }
         Box {
             Box(modifier = Modifier
-                .background(Color(R.color.darkBlue), shapes.extraLarge)
+                .background(colorResource(id = R.color.darkBlue), shapes.extraLarge)
                 .border(2.dp, colorResource(id = R.color.lightBlue), shapes.extraLarge)
                 .width(110.dp)
                 .height(40.dp)
@@ -117,7 +118,7 @@ fun HomeTopBar() {
 fun HomeMainContent(onQuizSelect: () -> Unit = {}) {
     val quizzes = homeViewModel?.state?.availableQuizes
     if(!quizzes.isNullOrEmpty()) {
-        LazyColumn() {
+        LazyColumn {
             items(quizzes) { quiz ->
                 HomeQuizCard(quiz = quiz)
                 Spacer(modifier = Modifier.height(15.dp))
@@ -140,7 +141,10 @@ fun HomeQuizCard(quiz: Quiz, onQuizSelect: () -> Unit = {}) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
-                .background(color = Color(quiz.rValue, quiz.gValue, quiz.bValue), shape = shapes.extraSmall)
+                .background(
+                    color = Color(quiz.rValue, quiz.gValue, quiz.bValue),
+                    shape = shapes.extraSmall
+                )
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -168,73 +172,89 @@ fun HomeQuizCard(quiz: Quiz, onQuizSelect: () -> Unit = {}) {
 
 @Composable
 fun HomeBottomNav(onShopClick: () -> Unit = {}) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        FloatingActionButton(
-            onClick = {},
-            modifier = Modifier
-                .width(160.dp)
-                .height(80.dp)
-                .align(Alignment.BottomCenter),
-            containerColor = colorResource(id = R.color.darkBlue),
-            contentColor = colorResource(id = R.color.darkBlue)
+    Box(
+        contentAlignment = Alignment.BottomEnd,
+        modifier = Modifier.fillMaxWidth().height(200.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
+            FloatingActionButton(
+                onClick = {},
                 modifier = Modifier
+                    .width(160.dp)
+                    .height(80.dp)
                     .background(
-                        color = colorResource(id = R.color.lightBlue),
-                        shape = shapes.extraLarge
-                    )
-                    .width(100.dp)
-                    .height(60.dp)
+                        color = colorResource(id = R.color.darkBlue),
+                        shape = RoundedCornerShape(32.dp, 0.dp, 0.dp, 32.dp)
+                    ),
+                containerColor = colorResource(id = R.color.darkBlue),
+                contentColor = colorResource(id = R.color.darkBlue)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.home),
-                    contentDescription = "Home",
-                    colorFilter = ColorFilter.tint(
-                        colorResource(id = R.color.white)
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .background(
+                            color = colorResource(id = R.color.lightBlue),
+                            shape = shapes.extraLarge
+                        )
+                        .width(100.dp)
+                        .height(60.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.home),
+                        contentDescription = "Home",
+                        colorFilter = ColorFilter.tint(
+                            colorResource(id = R.color.white)
+                        )
                     )
+                }
+            }
+
+            Column {
+                Spacer(
+                    modifier = Modifier
+                        .background(color = colorResource(id = R.color.darkBlue))
+                        .width(5.dp)
+                        .height(10.dp)
+                )
+                Spacer(
+                    modifier = Modifier
+                        .background(color = colorResource(id = R.color.white))
+                        .width(5.dp)
+                        .height(60.dp)
+                )
+                Spacer(
+                    modifier = Modifier
+                        .background(color = colorResource(id = R.color.darkBlue))
+                        .width(5.dp)
+                        .height(10.dp)
                 )
             }
-        }
 
-        Column {
-            Spacer(
+            FloatingActionButton(
+                onClick = { onShopClick() },
                 modifier = Modifier
-                    .background(color = colorResource(id = R.color.darkBlue))
-                    .width(5.dp)
-                    .height(10.dp)
-            )
-            Spacer(
-                modifier = Modifier
-                    .background(color = colorResource(id = R.color.white))
-                    .width(5.dp)
-                    .height(60.dp)
-            )
-            Spacer(
-                modifier = Modifier
-                    .background(color = colorResource(id = R.color.darkBlue))
-                    .width(5.dp)
-                    .height(10.dp)
-            )
-        }
-
-        FloatingActionButton(
-            onClick = { onShopClick() },
-            modifier = Modifier
-                .width(160.dp)
-                .height(80.dp)
-                .align(Alignment.BottomCenter),
-            containerColor = colorResource(id = R.color.darkBlue),
-            contentColor = colorResource(id = R.color.darkBlue)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.shop),
-                contentDescription = "Shop",
-                colorFilter = ColorFilter.tint(
-                    colorResource(id = R.color.white)
+                    .width(160.dp)
+                    .height(80.dp)
+                    .background(
+                        color = colorResource(id = R.color.darkBlue),
+                        shape = RoundedCornerShape(0.dp, 32.dp, 32.dp, 0.dp)
+                    ),
+                containerColor = colorResource(id = R.color.darkBlue),
+                contentColor = colorResource(id = R.color.darkBlue)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.shop),
+                    contentDescription = "Shop",
+                    colorFilter = ColorFilter.tint(
+                        colorResource(id = R.color.white)
+                    ),
+                    modifier = Modifier.scale(0.75f)
                 )
-            )
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,15 +39,16 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Background() {
     Image(painter = painterResource(R.drawable.bg),
-        contentDescription = null
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize().scale(1.0f, 1.1f)
     )
 }
 @Preview
 @Composable
 fun MainPreview() {
     Quiz_AppTheme {
+        Background()
         Box(modifier = Modifier.fillMaxSize()) {
-            Background()
             QuizAppStart()
         }
     }

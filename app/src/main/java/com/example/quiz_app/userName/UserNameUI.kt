@@ -9,6 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -92,9 +93,9 @@ fun UserNameScreen(onPlayClick: () -> Unit = {}) {
                     imeAction = ImeAction.Done
                 ),
                 label = {
-                    Text(text = stringResource(R.string.userName), color = Color(R.color.white))
+                    Text(text = stringResource(R.string.userName), color = colorResource(R.color.white))
                 },
-                textStyle = TextStyle(color = Color(R.color.white), background = Color(R.color.darkBlue))
+                textStyle = TextStyle(color = colorResource(R.color.white), background = colorResource(R.color.darkBlue))
             )
         }
         Row(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
