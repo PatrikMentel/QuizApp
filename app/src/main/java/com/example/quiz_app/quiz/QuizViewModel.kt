@@ -14,16 +14,19 @@ import com.example.quiz_app.data.Repositories
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+// datova trieda zoznamu otazok kvizu
 data class QuizState(
     val quizQuestions: List<Question> = emptyList()
 )
 
+// uklada stav quiz obrazovke a berie otazky z databazy
 class QuizViewModel(private val questionRepos: QuestionRepository = Repositories.questionRepos): ViewModel() {
 
     var quizState by mutableStateOf(QuizState())
         private set
 
-    private val timer = object: CountDownTimer(12000, 1000) {
+    // casovac, po jeho uplynuti sa kviz vyhodnoti
+    private val timer = object: CountDownTimer(120000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             timeRemaing.intValue--
         }
@@ -32,16 +35,17 @@ class QuizViewModel(private val questionRepos: QuestionRepository = Repositories
             finishQuiz()
         }
     }
-    var timeRemaing = mutableIntStateOf(12)
-    var currIndex = mutableIntStateOf(0)
-    private var totalPoints = 0f
-    var onQuizCompleteFunc: () -> Unit = {}
+    var timeRemaing = mutableIntStateOf(120) // zostavajuci cas
+    var currIndex = mutableIntStateOf(0)    // aktualny index otazky
+    private var totalPoints = 0f                    // dosiahnute hodnotenie
+    var onQuizCompleteFunc: () -> Unit = {}         // funkcia ktora sa zavola po dokonceni kvizu
 
     init {
         timer.start()
         getQuestions()
     }
 
+    // nacita otazky
     private fun getQuestions() {
         viewModelScope.launch {
             questionRepos.getQuestionsFor(AppData.chosenQuizId).collectLatest {
@@ -52,6 +56,7 @@ class QuizViewModel(private val questionRepos: QuestionRepository = Repositories
         }
     }
 
+    // skontroluje spravnu odpoved a prideli body
     fun checkAndNext(answerIndex: Int) {
         if (answerIndex == quizState.quizQuestions[currIndex.intValue].correctAnswer) {
             totalPoints += 10f
@@ -65,6 +70,7 @@ class QuizViewModel(private val questionRepos: QuestionRepository = Repositories
         }
     }
 
+    // dokoncenie kvizu a zrusenie casovaca
     private fun finishQuiz(onQuizComplete: () -> Unit = {}) {
         AppData.points = totalPoints
         timer.cancel()

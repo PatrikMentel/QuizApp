@@ -139,7 +139,7 @@ fun AnswerButton(index:Int, quizViewModel: QuizViewModel, answerTxt: String) {
         Text(
             text = answerTxt,
             color = colorResource(id = R.color.white),
-            fontSize = 14.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight(500),
             textAlign = TextAlign.Center,
             letterSpacing = 1.sp,

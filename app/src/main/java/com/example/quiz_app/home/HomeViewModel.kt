@@ -11,10 +11,12 @@ import com.example.quiz_app.data.Repositories
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+// datova trieda zoznamu dostupnych kvizov
 data class HomeState(
     val availableQuizes: List<Quiz> = emptyList()
 )
 
+// uklada stav domovskej obrazovke a berie kvizy z databazy
 class HomeViewModel(private val quizRepos: QuizRepository = Repositories.quizRepos): ViewModel() {
 
     var homeState by mutableStateOf(HomeState())
@@ -24,6 +26,7 @@ class HomeViewModel(private val quizRepos: QuizRepository = Repositories.quizRep
         getQuizes()
     }
 
+    // pomocou korutiny nacita kvizy
     private fun getQuizes() {
         viewModelScope.launch {
             quizRepos.availableQuizes.collectLatest {

@@ -10,12 +10,13 @@ import kotlinx.coroutines.launch
 
 class QuizCompleteViewModel(private val quizRepos: QuizRepository = Repositories.quizRepos): ViewModel() {
 
+    // dokoncuje vyhodnotenie kvizu a zapisuje potrebne hodnoty do shared preferences
     fun completeQuiz(sharedPreferences: SharedPreferences) {
         viewModelScope.launch {
             quizRepos.completeQuiz(AppData.chosenQuizId, AppData.points.toString())
         }
         AppData.chosenQuizId = -1
-        AppData.coins += (AppData.points * 3f).toInt()
+        AppData.coins += AppData.points.toInt()
         AppData.points = 0f
         val editor = sharedPreferences.edit()
         editor.putString("coins", AppData.coins.toString())
