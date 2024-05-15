@@ -17,7 +17,7 @@ data class HomeState(
 
 class HomeViewModel(private val quizRepos: QuizRepository = Repositories.quizRepos): ViewModel() {
 
-    var state by mutableStateOf(HomeState())
+    var homeState by mutableStateOf(HomeState())
         private set
 
     init {
@@ -27,7 +27,7 @@ class HomeViewModel(private val quizRepos: QuizRepository = Repositories.quizRep
     private fun getQuizes() {
         viewModelScope.launch {
             quizRepos.availableQuizes.collectLatest {
-                state = state.copy(
+                homeState = homeState.copy(
                     availableQuizes = it
                 )
             }

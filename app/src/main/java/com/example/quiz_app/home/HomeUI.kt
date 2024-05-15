@@ -51,8 +51,8 @@ fun HomeScreen(onShopClick: () -> Unit = {}, onQuizSelect: () -> Unit = {}) {
         HomeTopBar()
         Spacer(modifier = Modifier.padding(10.dp))
         HomeMainContent(onQuizSelect)
-        HomeBottomNav(onShopClick)
     }
+    HomeBottomNav(onShopClick)
 }
 
 @Composable
@@ -116,11 +116,13 @@ fun HomeTopBar() {
 
 @Composable
 fun HomeMainContent(onQuizSelect: () -> Unit = {}) {
-    val quizzes = homeViewModel?.state?.availableQuizes
+    val quizzes = homeViewModel?.homeState?.availableQuizes
     if(!quizzes.isNullOrEmpty()) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.fillMaxHeight()
+        ) {
             items(quizzes) { quiz ->
-                HomeQuizCard(quiz = quiz)
+                HomeQuizCard(quiz = quiz, onQuizSelect)
                 Spacer(modifier = Modifier.height(15.dp))
             }
         }
@@ -130,7 +132,10 @@ fun HomeMainContent(onQuizSelect: () -> Unit = {}) {
 @Composable
 fun HomeQuizCard(quiz: Quiz, onQuizSelect: () -> Unit = {}) {
     Button(
-        onClick = { onQuizSelect() },
+        onClick = {
+            AppData.chosenQuizId = quiz.id
+            onQuizSelect()
+        },
         modifier = Modifier
             .fillMaxWidth(0.9f)
             .height(180.dp),
@@ -174,7 +179,9 @@ fun HomeQuizCard(quiz: Quiz, onQuizSelect: () -> Unit = {}) {
 fun HomeBottomNav(onShopClick: () -> Unit = {}) {
     Box(
         contentAlignment = Alignment.BottomEnd,
-        modifier = Modifier.fillMaxWidth().height(200.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.95f)
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,

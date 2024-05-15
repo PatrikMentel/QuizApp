@@ -11,4 +11,8 @@ class QuizRepository(private val quizDao: QuizDao) {
         quizDao.buyQuiz(quizId)
     }
 
+    suspend fun completeQuiz(quizId: Int, rating: String) {
+        quizDao.completeQuiz(quizId, rating)
+    }
+
 }

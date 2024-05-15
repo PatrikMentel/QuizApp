@@ -1,6 +1,5 @@
 package com.example.quiz_app.data
 
-import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

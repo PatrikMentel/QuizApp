@@ -1,17 +1,14 @@
 package com.example.quiz_app.data
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface QuizDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addQuiz(quiz: Quiz)
+    @Query("UPDATE Quizes SET rating = :rating WHERE id = :quizId")
+    suspend fun completeQuiz(quizId: Int, rating: String)
 
     @Query("SELECT * FROM Quizes WHERE locked = 0 ORDER BY id ASC")
     fun getAvailableQuizes(): Flow<List<Quiz>>

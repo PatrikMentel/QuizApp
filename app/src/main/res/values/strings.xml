@@ -7,5 +7,5 @@
     <string name="home_screen">Home</string>
     <string name="shop_screen">Shop</string>
     <string name="quiz_screen">Quiz</string>
-    <string name="quiz_config">Quiz Configuration</string>
+    <string name="quiz_complete">Quiz Complete</string>
 </resources>

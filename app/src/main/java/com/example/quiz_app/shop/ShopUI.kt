@@ -1,5 +1,6 @@
 package com.example.quiz_app.shop
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,8 +55,8 @@ fun ShopScreen(onHomeClick: () -> Unit = {}) {
         ShopTopBar()
         Spacer(modifier = Modifier.padding(10.dp))
         ShopMainContent()
-        ShopBottomNav(onHomeClick)
     }
+    ShopBottomNav(onHomeClick)
 }
 
 @Composable
@@ -107,7 +108,7 @@ fun ShopTopBar() {
                         modifier = Modifier.scale(0.6f)
                     )
                     Text(
-                        text = AppData.coins.toString(),
+                        text = shopViewModel?.coinsDisplay?.intValue.toString(),
                         fontSize = 20.sp,
                         color = colorResource(id = R.color.white)
                     )
@@ -121,7 +122,9 @@ fun ShopTopBar() {
 fun ShopMainContent() {
     val quizzes = shopViewModel?.state?.lockedQuizes
     if (!quizzes.isNullOrEmpty()) {
-        LazyColumn() {
+        LazyColumn(
+            modifier = Modifier.fillMaxHeight()
+        ) {
             items(quizzes) { quiz ->
                 ShopQuizCard(quiz = quiz)
                 Spacer(modifier = Modifier.height(15.dp))
@@ -184,8 +187,16 @@ fun ShopQuizCard(quiz: Quiz) {
                     Box {
                         Button(
                             onClick = {
-                                      shopViewModel?.buyQuiz(quizId = quiz.id, coroutineScope = coroutine)
-                                      Toast.makeText(context, "New quiz unlocked!", Toast.LENGTH_SHORT).show()
+                                val success: Boolean? = shopViewModel?.buyQuiz(quizId = quiz.id, quizAmount = quiz.buyAmount, coroutineScope = coroutine)
+                                if (success != null && success) {
+                                    Toast.makeText(context, "New quiz unlocked!", Toast.LENGTH_SHORT).show()
+                                    val shpEditor = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).edit()
+                                    shpEditor.putString("coins", AppData.coins.toString())
+                                    shpEditor.apply()
+                                }
+                                else {
+                                    Toast.makeText(context, "Not enough money!", Toast.LENGTH_SHORT).show()
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkBlue))
                         ) {
@@ -205,7 +216,12 @@ fun ShopQuizCard(quiz: Quiz) {
 
 @Composable
 fun ShopBottomNav(onHomeClick: () -> Unit = {}) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        contentAlignment = Alignment.BottomEnd,
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.95f)
+    ) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -257,7 +273,11 @@ fun ShopBottomNav(onHomeClick: () -> Unit = {}) {
                 onClick = { },
                 modifier = Modifier
                     .width(160.dp)
-                    .height(80.dp),
+                    .height(80.dp)
+                    .background(
+                        color = colorResource(id = R.color.darkBlue),
+                        shape = RoundedCornerShape(0.dp, 32.dp, 32.dp, 0.dp)
+                    ),
                 containerColor = colorResource(id = R.color.darkBlue),
                 contentColor = colorResource(id = R.color.darkBlue)
             ) {
@@ -267,8 +287,8 @@ fun ShopBottomNav(onHomeClick: () -> Unit = {}) {
                         .width(100.dp)
                         .height(60.dp)
                         .background(
-                            color = colorResource(id = R.color.darkBlue),
-                            shape = RoundedCornerShape(0.dp, 32.dp, 32.dp, 0.dp)
+                            color = colorResource(id = R.color.lightBlue),
+                            shape = shapes.extraLarge
                         )
                 ) {
                     Image(

@@ -21,7 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.quiz_app.home.HomeScreen
 import com.example.quiz_app.quiz.QuizScreen
-import com.example.quiz_app.quizConfig.QuizConfigScreen
+import com.example.quiz_app.quizComplete.QuizCompleteScreen
 import com.example.quiz_app.shop.ShopScreen
 import com.example.quiz_app.userName.UserNameScreen
 import com.example.quiz_app.ui.theme.Quiz_AppTheme
@@ -60,7 +60,7 @@ enum class ScreenNav(@StringRes val title:Int)
     Home(title =  R.string.home_screen),
     Shop(title =  R.string.shop_screen),
     Quiz(title =  R.string.quiz_screen),
-    QuizConfig(title = R.string.quiz_config)
+    QuizComplete(title = R.string.quiz_complete)
 }
 
 @Composable
@@ -71,7 +71,7 @@ fun QuizAppStart(navController: NavHostController = rememberNavController())
     var startScreen = ScreenNav.Start.name
     if (username != null) {
         startScreen = ScreenNav.Home.name
-        val coins = sharedPreferences.getString("coins", "100")
+        val coins = sharedPreferences.getString("coins", null)
         AppData.userName = username
         if (coins != null) {
             AppData.coins = coins.toInt()
@@ -90,23 +90,20 @@ fun QuizAppStart(navController: NavHostController = rememberNavController())
         {
             HomeScreen(
                 onShopClick = { navigateTo(navController, ScreenNav.Shop.name) },
-                onQuizSelect = { navigateTo(navController, ScreenNav.QuizConfig.name) }
+                onQuizSelect = { navigateTo(navController, ScreenNav.Quiz.name) }
             )
         }
         composable (route = ScreenNav.Shop.name)
         {
             ShopScreen(onHomeClick = { navigateTo(navController, ScreenNav.Home.name) })
         }
-        composable (route = ScreenNav.QuizConfig.name)
-        {
-            QuizConfigScreen(
-                onReturnClick = { navigateTo(navController, ScreenNav.Home.name) },
-                onModeSelect = { navigateTo(navController, ScreenNav.Quiz.name) }
-            )
-        }
         composable (route = ScreenNav.Quiz.name)
         {
-            QuizScreen(onQuizComplete = { navigateTo(navController, ScreenNav.Home.name)})
+            QuizScreen(onQuizComplete = { navigateTo(navController, ScreenNav.QuizComplete.name)})
+        }
+        composable (route = ScreenNav.QuizComplete.name)
+        {
+            QuizCompleteScreen(onContinueClick = { navigateTo(navController, ScreenNav.Home.name)})
         }
     }
 }

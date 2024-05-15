@@ -1,6 +1,5 @@
 package com.example.quiz_app.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,6 +12,6 @@ interface QuestionDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addQuestion(question: Question)
 
-    @Query("SELECT * FROM questions WHERE quizId = :chosenQuizId ORDER BY quizId ASC")
+    @Query("SELECT * FROM questions WHERE quizId = :chosenQuizId ORDER BY qText")
     fun getQuestionsFor(chosenQuizId: Int): Flow<List<Question>>
 }
